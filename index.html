@@ -1,280 +1,741 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <title>Study Tracker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hollow Knight Activity Timer</title>
     <style>
-        :root {
-            --bg-primary: #121212;
-            --bg-secondary: #1e1e1e;
-            --text-primary: #e0e0e0;
-            --text-secondary: #b0b0b0;
-            --accent-primary: #bd4747;
-            --accent-secondary: #756ac8;
-            --border-color: #353535;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Trajan+Pro:wght@400;700&family=Cinzel:wght@400;600&family=Metamorphous:wght@400&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Merriweather', serif;
         }
-
+        
         body {
-            background-image: url('arcane.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            backdrop-filter: blur(3px);
-            color: var(--text-primary);
+            background: radial-gradient(ellipse at center, #ff6b35 0%, #2d1b0e 70%, #000000 100%);
+            min-height: 100vh;
+            font-family: 'Metamorphous', serif;
+            color: #f5f5dc;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        /* Animated particles background */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 8s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) translateX(50px); opacity: 0; }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px 120px 20px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px 100px 15px;
+            }
+        }
+        
+        .header {
             display: flex;
             justify-content: center;
-            min-height: 100vh;
-            line-height: 1.6;
-            padding: 20px;
+            align-items: flex-start;
+            margin-bottom: 40px;
         }
-
-        .app-container {
-            display: flex;
-            width: 100%;
-            max-width: 1000px;
-            gap: 30px;
-            background-color: rgba(30, 30, 30, 0);
-            border-radius: 15px;
-            padding: 20px;
-        }
-
-        .tracker-container,
-        .completed-topics-container {
-            background-color: rgba(30, 30, 30, 0.879);
-            backdrop-filter: blur(10px);
-        }
-
-
-        .tracker-container {
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            padding: 30px;
-            width: 50%;
+        
+        .title {
+            font-family: 'Trajan Pro', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            position: relative;
+            flex-grow: 1;
             text-align: center;
         }
-
-        .completed-topics-container {
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            padding: 30px;
-            width: 50%;
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+                letter-spacing: 0.2em;
+            }
         }
-
-        h1 {
-            margin-bottom: 20px;
-            color: var(--accent-primary);
-            font-weight: 700;
+        
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.5rem;
+                letter-spacing: 0.1em;
+            }
         }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 16px;
+        
+        .title::before,
+        .title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #f5f5dc, transparent);
         }
-
-        input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
+        
+        .title::before {
+            left: -250px;
         }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
+        
+        .title::after {
+            right: -250px;
+        }
+        
+        @media (max-width: 1024px) {
+            .title::before,
+            .title::after {
+                width: 150px;
+            }
+            
+            .title::before {
+                left: -180px;
+            }
+            
+            .title::after {
+                right: -180px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .title::before,
+            .title::after {
+                display: none;
+            }
+        }
+        
+        .ornament {
+            font-size: 2rem;
+            margin: 20px 0;
+            opacity: 0.7;
+        }
+        
+        .activity-slots {
+            margin: 40px 0;
+        }
+        
+        .activity-slot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 15px 0;
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.4);
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
+            border-top: 2px solid rgba(245, 245, 220, 0.6);
+            border-radius: 0;
+            font-size: 1.3rem;
+            letter-spacing: 0.1em;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-
-        #start-btn {
-            background-color: var(--accent-primary);
-            color: var(--bg-primary);
-            margin-bottom: 15px;
+        
+        @media (max-width: 768px) {
+            .activity-slot {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 15px 20px;
+                font-size: 1.1rem;
+                gap: 15px;
+            }
         }
-
-        #start-btn:disabled {
-            background-color: var(--text-secondary);
+        
+        .activity-slot:hover {
+            border-top-color: #ff6b35;
+            background: rgba(0, 0, 0, 0.6);
+            transform: translateX(5px);
+        }
+        
+        .activity-slot.running {
+            border-top-color: #ff6b35;
+            background: rgba(255, 107, 53, 0.2);
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+        }
+        
+        .slot-number {
+            font-size: 2rem;
+            margin-right: 20px;
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .slot-number {
+                font-size: 1.5rem;
+                margin-right: 0;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+        }
+        
+        .slot-content {
+            flex-grow: 1;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 768px) {
+            .slot-content {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+        
+        .activity-input {
+            background: transparent;
+            border: none;
+            color: #f5f5dc;
+            font-family: 'Metamorphous', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            width: 300px;
+            outline: none;
+            border-bottom: 1px solid rgba(245, 245, 220, 0.3);
+            padding: 5px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .activity-input {
+                width: 100%;
+                font-size: 1.1rem;
+                text-align: center;
+            }
+        }
+        
+        .activity-input::placeholder {
+            color: rgba(245, 245, 220, 0.5);
+            font-style: italic;
+        }
+        
+        .activity-input:focus {
+            border-bottom-color: #ff6b35;
+        }
+        
+        .activity-input:not(:placeholder-shown) {
+            border-bottom-color: #f5f5dc;
+        }
+        
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (max-width: 768px) {
+            .timer-controls {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+        
+        .mini-timer {
+            font-size: 1.1rem;
+            min-width: 80px;
+            text-align: center;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        
+        .mini-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(245, 245, 220, 0.3);
+            color: #f5f5dc;
+            padding: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+        
+        .mini-btn:hover:not(:disabled) {
+            border-color: #ff6b35;
+            background: rgba(255, 107, 53, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .mini-btn:disabled {
             cursor: not-allowed;
         }
-
-        #mark-completed-btn {
-            background-color: var(--accent-secondary);
-            color: var(--bg-primary);
-            display: none;
-            margin-top: 15px;
+        
+        .mini-btn:active {
+            transform: scale(0.95);
         }
-
-        #current-topic,
-        #timer {
-            margin: 20px 0;
-            color: var(--text-primary);
+        
+        .slot-clear {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(245, 245, 220, 0.3);
+            color: #f5f5dc;
+            padding: 8px 15px;
+            font-family: 'Metamorphous', serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            letter-spacing: 0.05em;
+            flex-shrink: 0;
         }
-
-        #current-topic {
-            font-size: 18px;
-            font-weight: 400;
+        
+        @media (max-width: 768px) {
+            .slot-clear {
+                align-self: center;
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
         }
-
-        #timer {
-            font-size: 24px;
-            font-weight: 700;
+        
+        .slot-clear:hover {
+            border-color: #ff6b35;
+            background: rgba(255, 107, 53, 0.2);
+            transform: translateY(-2px);
         }
-
-        .completed-topics-list {
-            list-style-type: none;
-        }
-
-        .completed-topics-list li {
-            background-color: var(--bg-primary);
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 8px;
+        
+        .controls {
+            margin: 40px 0;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
-
-        .completed-topics-list li span {
-            flex-grow: 1;
+        
+        @media (max-width: 768px) {
+            .controls {
+                margin: 30px 0;
+            }
         }
-
-        .completed-topic {
-            text-decoration: line-through;
-            color: var(--text-secondary);
+        
+        .add-slot-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(245, 245, 220, 0.5);
+            color: #f5f5dc;
+            padding: 15px 40px;
+            font-family: 'Metamorphous', serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
         }
-
-        .completed-topic-time {
-            font-size: 0.8em;
-            color: var(--text-secondary);
-            margin-left: 10px;
+        
+        @media (max-width: 768px) {
+            .add-slot-btn {
+                font-size: 1rem;
+                padding: 12px 30px;
+            }
         }
-
-        .completed-topics-container {
-            text-align: center;
+        
+        .add-slot-btn:hover {
+            border-color: #ff6b35;
+            background: rgba(255, 107, 53, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(245, 245, 220, 0.5);
+            color: #f5f5dc;
+            padding: 12px 30px;
+            margin: 0 10px;
+            font-family: 'Metamorphous', serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            border-color: #ff6b35;
+            background: rgba(255, 107, 53, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            cursor: not-allowed;
+        }
+        
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
+            letter-spacing: 0.2em;
+            opacity: 0.8;
+            z-index: 10;
+        }
+        
+        @media (max-width: 768px) {
+            .back-btn {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
+                margin-top: 30px;
+            }
+        }
+        
+        @keyframes flash {
+            0%, 100% { background: radial-gradient(ellipse at center, #ff6b35 0%, #2d1b0e 70%, #000000 100%); }
+            50% { background: radial-gradient(ellipse at center, #ffaa35 0%, #4d3b2e 70%, #222222 100%); }
         }
     </style>
 </head>
-
 <body>
-    <div class="app-container">
-        <div class="tracker-container">
-            <h1>Study Tracker</h1>
-            <input type="text" id="topic-input" placeholder="Enter study topic">
-            <input type="number" id="time-input" placeholder="Study time (minutes)" min="1">
-            <button id="start-btn" class="btn">Start Study Session</button>
-            <div id="current-topic"></div>
-            <div id="timer"></div>
-            <button id="mark-completed-btn" class="btn">Mark Completed</button>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Activity Timer</h1>
         </div>
-        <div class="completed-topics-container">
-            <h1>Completed Topics</h1>
-            <ul id="completed-topics-list" class="completed-topics-list"></ul>
+        <div class="ornament">⟡ ⟢ ⟡ ⟢ ⟡ ⟢ ⟡</div>
+        
+        <div class="activity-slots" id="activitySlots">
+            <div class="activity-slot" data-slot="1">
+                <span class="slot-number">❋ 1.</span>
+                <div class="slot-content">
+                    <input type="text" class="activity-input" placeholder="Enter activity name...">
+                    <div class="timer-controls">
+                        <div class="mini-timer">00:00</div>
+                        <button class="mini-btn start-btn">▶</button>
+                        <button class="mini-btn pause-btn">⏸</button>
+                        <button class="mini-btn reset-btn">⏹</button>
+                    </div>
+                </div>
+                <button class="slot-clear">Clear Save</button>
+            </div>
+            
+            <div class="activity-slot" data-slot="2">
+                <span class="slot-number">❋ 2.</span>
+                <div class="slot-content">
+                    <input type="text" class="activity-input" placeholder="Enter activity name...">
+                    <div class="timer-controls">
+                        <div class="mini-timer">00:00</div>
+                        <button class="mini-btn start-btn">▶</button>
+                        <button class="mini-btn pause-btn">⏸</button>
+                        <button class="mini-btn reset-btn">⏹</button>
+                    </div>
+                </div>
+                <button class="slot-clear">Clear Save</button>
+            </div>
+            
+            <div class="activity-slot" data-slot="3">
+                <span class="slot-number">❋ 3.</span>
+                <div class="slot-content">
+                    <input type="text" class="activity-input" placeholder="Enter activity name...">
+                    <div class="timer-controls">
+                        <div class="mini-timer">00:00</div>
+                        <button class="mini-btn start-btn">▶</button>
+                        <button class="mini-btn pause-btn">⏸</button>
+                        <button class="mini-btn reset-btn">⏹</button>
+                    </div>
+                </div>
+                <button class="slot-clear">Clear Save</button>
+            </div>
+            
+            <div class="activity-slot" data-slot="4">
+                <span class="slot-number">❋ 4.</span>
+                <div class="slot-content">
+                    <input type="text" class="activity-input" placeholder="Enter activity name...">
+                    <div class="timer-controls">
+                        <div class="mini-timer">00:00</div>
+                        <button class="mini-btn start-btn">▶</button>
+                        <button class="mini-btn pause-btn">⏸</button>
+                        <button class="mini-btn reset-btn">⏹</button>
+                    </div>
+                </div>
+                <button class="slot-clear">Clear Save</button>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="add-slot-btn" id="addSlotBtn">+ Add New Activity</button>
+        </div>
+        
+        <div class="back-btn">
+            <button class="btn" id="backBtn">Back</button>
         </div>
     </div>
-
+    
     <script>
-        const topicInput = document.getElementById('topic-input');
-        const timeInput = document.getElementById('time-input');
-        const startBtn = document.getElementById('start-btn');
-        const markCompletedBtn = document.getElementById('mark-completed-btn');
-        const currentTopicDiv = document.getElementById('current-topic');
-        const timerDiv = document.getElementById('timer');
-        const completedTopicsList = document.getElementById('completed-topics-list');
-
-        let timerInterval;
-        let startTime;
-
-        startBtn.addEventListener('click', startStudySession);
-        markCompletedBtn.addEventListener('click', endStudySession);
-
-        function startStudySession() {
-            const topic = topicInput.value.trim();
-            const time = parseInt(timeInput.value);
-
-            if (!topic || isNaN(time) || time < 1) {
-                alert('Please enter a valid topic and study time.');
+        // Global variables
+        let timers = {};
+        let intervals = {};
+        let slotCounter = 4;
+        
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            if (!particlesContainer) return;
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Format time display
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            
+            if (hours > 0) {
+                return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            } else {
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+        }
+        
+        // Get slot data
+        function getSlotData(slotElement) {
+            const slotId = slotElement.getAttribute('data-slot');
+            const input = slotElement.querySelector('.activity-input');
+            const timerDisplay = slotElement.querySelector('.mini-timer');
+            const startBtn = slotElement.querySelector('.start-btn');
+            const pauseBtn = slotElement.querySelector('.pause-btn');
+            const resetBtn = slotElement.querySelector('.reset-btn');
+            const clearBtn = slotElement.querySelector('.slot-clear');
+            
+            return { slotId, input, timerDisplay, startBtn, pauseBtn, resetBtn, clearBtn };
+        }
+        
+        // Start timer for a slot
+        function startTimer(slotElement) {
+            const { slotId, input, timerDisplay } = getSlotData(slotElement);
+            const activityName = input.value.trim();
+            
+            if (!activityName) {
+                alert('Please enter an activity name first!');
+                input.focus();
                 return;
             }
-
-            // Disable inputs and start button
-            topicInput.disabled = true;
-            timeInput.disabled = true;
-            startBtn.disabled = true;
-            markCompletedBtn.style.display = 'block';
-
-            // Record start time
-            startTime = new Date();
-
-            // Display current topic
-            currentTopicDiv.textContent = `Studying: ${topic}`;
-
-            // Start timer
-            let remainingSeconds = time * 60;
-            updateTimerDisplay(remainingSeconds);
-
-            timerInterval = setInterval(() => {
-                remainingSeconds--;
-                updateTimerDisplay(remainingSeconds);
-
-                if (remainingSeconds <= 0) {
-                    clearInterval(timerInterval);
-                    endStudySession();
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = seconds % 60;
-            timerDiv.textContent = `Time Remaining: ${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-        }
-
-        function endStudySession() {
-            // Clear the interval if it exists
-            if (timerInterval) {
-                clearInterval(timerInterval);
+            
+            // Initialize timer if needed
+            if (!timers[slotId]) {
+                timers[slotId] = 0;
             }
-
-            const topic = currentTopicDiv.textContent.replace('Studying: ', '');
-            const endTime = new Date();
-            const duration = Math.round((endTime - startTime) / 1000 / 60);
-
-            // Add to completed topics list
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `
-                <span class="completed-topic">${topic}</span>
-                <span class="completed-topic-time">${duration} min</span>
+            
+            // Clear any existing interval
+            if (intervals[slotId]) {
+                clearInterval(intervals[slotId]);
+            }
+            
+            // Add running state
+            slotElement.classList.add('running');
+            
+            // Start the timer
+            intervals[slotId] = setInterval(() => {
+                timers[slotId]++;
+                timerDisplay.textContent = formatTime(timers[slotId]);
+            }, 1000);
+            
+            console.log(`Started timer for slot ${slotId}: ${activityName}`);
+        }
+        
+        // Pause timer for a slot
+        function pauseTimer(slotElement) {
+            const { slotId } = getSlotData(slotElement);
+            
+            if (intervals[slotId]) {
+                clearInterval(intervals[slotId]);
+                delete intervals[slotId];
+                slotElement.classList.remove('running');
+                console.log(`Paused timer for slot ${slotId}`);
+            }
+        }
+        
+        // Reset timer for a slot
+        function resetTimer(slotElement) {
+            const { slotId, timerDisplay } = getSlotData(slotElement);
+            
+            // Clear interval
+            if (intervals[slotId]) {
+                clearInterval(intervals[slotId]);
+                delete intervals[slotId];
+            }
+            
+            // Reset timer
+            timers[slotId] = 0;
+            timerDisplay.textContent = '00:00';
+            slotElement.classList.remove('running');
+            
+            console.log(`Reset timer for slot ${slotId}`);
+        }
+        
+        // Clear a slot completely
+        function clearSlot(slotElement) {
+            const { slotId, input, timerDisplay } = getSlotData(slotElement);
+            
+            // Stop timer
+            if (intervals[slotId]) {
+                clearInterval(intervals[slotId]);
+                delete intervals[slotId];
+            }
+            
+            // Reset everything
+            timers[slotId] = 0;
+            timerDisplay.textContent = '00:00';
+            input.value = '';
+            slotElement.classList.remove('running');
+            
+            console.log(`Cleared slot ${slotId}`);
+        }
+        
+        // Add new slot
+        function addNewSlot() {
+            slotCounter++;
+            const slotsContainer = document.getElementById('activitySlots');
+            
+            const newSlot = document.createElement('div');
+            newSlot.className = 'activity-slot';
+            newSlot.setAttribute('data-slot', slotCounter.toString());
+            
+            newSlot.innerHTML = `
+                <span class="slot-number">❋ ${slotCounter}.</span>
+                <div class="slot-content">
+                    <input type="text" class="activity-input" placeholder="Enter activity name...">
+                    <div class="timer-controls">
+                        <div class="mini-timer">00:00</div>
+                        <button class="mini-btn start-btn">▶</button>
+                        <button class="mini-btn pause-btn">⏸</button>
+                        <button class="mini-btn reset-btn">⏹</button>
+                    </div>
+                </div>
+                <button class="slot-clear">Clear Save</button>
             `;
-            completedTopicsList.prepend(listItem);
-
-            // Reset UI
-            currentTopicDiv.textContent = 'Study Session Complete!';
-            timerDiv.textContent = '00:00';
-
-            // Reset inputs
-            topicInput.value = '';
-            timeInput.value = '';
-            topicInput.disabled = false;
-            timeInput.disabled = false;
-            startBtn.disabled = false;
-            markCompletedBtn.style.display = 'none';
+            
+            slotsContainer.appendChild(newSlot);
+            setupSlotEvents(newSlot);
+            timers[slotCounter] = 0;
+            
+            console.log(`Added new slot ${slotCounter}`);
+        }
+        
+        // Setup event listeners for a slot
+        function setupSlotEvents(slotElement) {
+            const { input, startBtn, pauseBtn, resetBtn, clearBtn } = getSlotData(slotElement);
+            
+            startBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                startTimer(slotElement);
+            });
+            
+            pauseBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                pauseTimer(slotElement);
+            });
+            
+            resetBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                resetTimer(slotElement);
+            });
+            
+            clearBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                clearSlot(slotElement);
+            });
+            
+            // Input styling
+            input.addEventListener('input', () => {
+                if (input.value.trim()) {
+                    input.style.borderBottomColor = '#f5f5dc';
+                } else {
+                    input.style.borderBottomColor = 'rgba(245, 245, 220, 0.3)';
+                }
+            });
+        }
+        
+        // Initialize everything
+        function initialize() {
+            console.log('Initializing timer app...');
+            
+            // Create particles
+            createParticles();
+            
+            // Initialize timers
+            for (let i = 1; i <= 4; i++) {
+                timers[i] = 0;
+            }
+            
+            // Setup existing slots
+            const slots = document.querySelectorAll('.activity-slot');
+            slots.forEach(slot => setupSlotEvents(slot));
+            
+            // Setup main buttons
+            const addSlotBtn = document.getElementById('addSlotBtn');
+            const backBtn = document.getElementById('backBtn');
+            
+            if (addSlotBtn) {
+                addSlotBtn.addEventListener('click', addNewSlot);
+            }
+            
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to go back? All timers will be lost.')) {
+                        location.reload();
+                    }
+                });
+            }
+            
+            console.log('Timer app initialized successfully!');
+        }
+        
+        // Start when page is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initialize);
+        } else {
+            initialize();
         }
     </script>
 </body>
-
 </html>
