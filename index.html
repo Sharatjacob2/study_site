@@ -18,7 +18,7 @@ body{
 .title-underline{display:block;width:200px;margin:4px auto 20px auto;height:auto}
 /* slots */
 .activity-slots{margin-top:20px;position:relative}
-.slot-wrap{display:flex;justify-content:center;align-items:center;gap:40px;margin:28px 0;position:relative}
+.slot-wrap{display:flex;justify-content:center;align-items:center;gap:20px;margin:28px 0;position:relative}
 .activity-slot{
   display:flex;align-items:center;gap:20px;padding:20px 30px;
   background:linear-gradient(to right,rgba(0,0,0,0)0%,rgba(0,0,0,0.55)15%,rgba(0,0,0,0.55)85%,rgba(0,0,0,0)100%);
@@ -31,20 +31,110 @@ body{
 }
 .corner-circle{position:absolute;top:0;left:0;width:50px;height:50px;z-index:1}
 .side-icon-left,.side-icon-right{width:50px;height:50px;display:none;position:absolute;top:50%;transform:translateY(-50%)}
-.slot-wrap.selected .side-icon-left{left:-40px;display:block}
-.slot-wrap.selected .side-icon-right{right:-40px;display:block}
+.slot-wrap.selected .side-icon-left{left:-60px;display:block}
+.slot-wrap.selected .side-icon-right{right:-60px;display:block}
 .slot-left{display:flex;align-items:center;gap:20px;font-family:'Cinzel',serif}
 .slot-number{font-size:2rem;opacity:.85}
-.activity-input{background:transparent;border:none;font-size:1.6rem;color:#f5f5dc;outline:none;font-family:'Cinzel',serif}
+.activity-input{
+  background:transparent;
+  border:none;
+  font-size:1.6rem;
+  color:#f5f5dc;
+  outline:none;
+  font-family:'Cinzel',serif;
+  padding:4px 8px;
+  border-radius:4px;
+  transition:background .15s ease;
+}
+.activity-input.selected{
+  background:rgba(245,245,220,0.1);
+}
 .timer-controls{display:flex;gap:10px;align-items:center}
-.mini-timer{font-size:1.4rem;min-width:140px;text-align:center}
-.mini-btn{background:none;border:none;color:#f5f5dc;font-size:1.3rem;cursor:pointer;transition:transform .1s ease;padding:6px 10px}
-.mini-btn:hover{transform:scale(1.2)}
-.clear-save{font-size:1.6rem;font-family:'Cinzel',serif;color:#fff;text-transform:uppercase;background:none;border:none;cursor:pointer;visibility:hidden}
+.mini-timer{font-size:1.4rem;min-width:140px;text-align:center;white-space:nowrap}
+.mini-btn{
+  background:rgba(245,245,220,0.1);
+  border:1px solid rgba(245,245,220,0.3);
+  border-radius:4px;
+  color:#f5f5dc;
+  font-size:1.3rem;
+  cursor:pointer;
+  transition:all .15s ease;
+  padding:8px 12px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.2);
+}
+.mini-btn:hover,
+.mini-btn.selected{
+  transform:scale(1.1);
+  background:rgba(245,245,220,0.2);
+  border-color:rgba(245,245,220,0.5);
+  box-shadow:0 4px 8px rgba(0,0,0,0.3);
+}
+.mini-btn.selected{
+  background:rgba(245,245,220,0.25);
+  border-color:rgba(245,245,220,0.6);
+  box-shadow:0 0 8px rgba(245,245,220,0.3);
+}
+.mini-btn:active{
+  transform:scale(0.95);
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+.clear-save{
+  font-size:1.6rem;
+  font-family:'Cinzel',serif;
+  color:#fff;
+  text-transform:uppercase;
+  background:rgba(245,245,220,0.05);
+  border:1px solid transparent;
+  border-radius:4px;
+  cursor:pointer;
+  visibility:hidden;
+  padding:8px 16px;
+  transition:all .15s ease;
+}
+.clear-save:hover,
+.clear-save.selected{
+  background:rgba(245,245,220,0.15);
+  transform:scale(1.02);
+}
+.clear-save.selected{
+  background:rgba(245,245,220,0.1);
+  border-color:rgba(245,245,220,0.2);
+}
+.clear-save:active{
+  transform:scale(0.98);
+  background:rgba(245,245,220,0.1);
+}
 .slot-wrap.selected .clear-save{visibility:visible}
 .controls{margin-top:40px}
-.add-slot-btn{background:none;border:none;font-family:'Cinzel',serif;font-size:1.6rem;color:#fff;text-transform:uppercase;cursor:pointer}
-.add-slot-btn:hover{transform:scale(1.05)}
+.add-slot-btn{
+  background:rgba(245,245,220,0.1);
+  border:1px solid rgba(245,245,220,0.3);
+  border-radius:4px;
+  font-family:'Cinzel',serif;
+  font-size:1.6rem;
+  color:#fff;
+  text-transform:uppercase;
+  cursor:pointer;
+  padding:12px 24px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.2);
+  transition:all .15s ease;
+}
+.add-slot-btn:hover,
+.add-slot-btn.selected{
+  transform:scale(1.05);
+  background:rgba(245,245,220,0.2);
+  border-color:rgba(245,245,220,0.5);
+  box-shadow:0 4px 8px rgba(0,0,0,0.3);
+}
+.add-slot-btn.selected{
+  background:rgba(245,245,220,0.25);
+  border-color:rgba(245,245,220,0.6);
+  box-shadow:0 0 8px rgba(245,245,220,0.3);
+}
+.add-slot-btn:active{
+  transform:scale(0.98);
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
 </style>
 </head>
 
@@ -64,6 +154,8 @@ let timers = {};        // {slotId: {seconds,name,running}}
 let intervals = {};
 let slotCounter = 0;
 let currentIndex = 0, slotWraps = [], lastMouseMoveTime = 0;
+let selectedControl = 0; // 0=input, 1=start, 2=pause, 3=reset, 4=clear save
+let addSlotSelected = false; // Track if Add Slot button is selected
 const STORAGE_KEY = 'hkTimers';
 
 /* helpers */
@@ -112,7 +204,8 @@ function resetTimer(slot){
 function clearSlot(slot){
   const {slotId,input,timerDisplay}=getSlotData(slot);
   pauseTimer(slot);
-  delete timers[slotId];
+  // Reset the timer data instead of deleting it
+  timers[slotId] = {seconds: 0, name: '', running: false};
   timerDisplay.textContent=formatTime(0);
   input.value='';
   persist();
@@ -120,11 +213,10 @@ function clearSlot(slot){
 
 /* slot creation */
 function createSlot(id,data={}){
-  slotCounter++;
   const cont=document.getElementById('activitySlots');
   const wrap=document.createElement('div');
   wrap.className='slot-wrap';
-  const slotId = id || slotCounter;
+  const slotId = id || (++slotCounter);
   wrap.innerHTML=`
     <img src="corner.png" class="corner-circle" alt="Corner SVG">
     <img src="left.png" class="side-icon-left" alt="Left selection SVG">
@@ -159,10 +251,49 @@ function setupSlotEvents(slot,wrap){
   resetBtn.onclick=e=>{e.preventDefault();resetTimer(slot);};
   input.oninput=()=>{ if(timers[slotId]){timers[slotId].name=input.value;persist();}};
   wrap.querySelector('.clear-save').onclick=e=>{e.preventDefault();clearSlot(slot);};
-  wrap.onmousemove=()=>{lastMouseMoveTime=Date.now();currentIndex=slotWraps.indexOf(wrap);highlightRow(currentIndex);}
+  wrap.onmousemove=()=>{lastMouseMoveTime=Date.now();currentIndex=slotWraps.indexOf(wrap);selectedControl=0;addSlotSelected=false;highlightRow(currentIndex);}
 }
 
-function highlightRow(i){slotWraps.forEach((wrap,idx)=>wrap.classList.toggle('selected',idx===i));}
+function highlightRow(i){
+  // Handle Add Slot button selection
+  const addSlotBtn = document.getElementById('addSlotBtn');
+  addSlotBtn.classList.toggle('selected', addSlotSelected);
+  
+  slotWraps.forEach((wrap,idx)=>{
+    const isSelected = idx === i && !addSlotSelected;
+    wrap.classList.toggle('selected', isSelected);
+    if (isSelected) {
+      // Highlight the selected control
+      const input = wrap.querySelector('.activity-input');
+      const startBtn = wrap.querySelector('.start-btn');
+      const pauseBtn = wrap.querySelector('.pause-btn');
+      const resetBtn = wrap.querySelector('.reset-btn');
+      const clearBtn = wrap.querySelector('.clear-save');
+      
+      input.classList.toggle('selected', selectedControl === 0);
+      startBtn.classList.toggle('selected', selectedControl === 1);
+      pauseBtn.classList.toggle('selected', selectedControl === 2);
+      resetBtn.classList.toggle('selected', selectedControl === 3);
+      clearBtn.classList.toggle('selected', selectedControl === 4);
+      
+      // Focus the input when it's selected
+      if (selectedControl === 0) {
+        input.focus();
+      } else {
+        input.blur();
+      }
+    } else {
+      // Remove highlights from non-selected rows
+      const input = wrap.querySelector('.activity-input');
+      input.classList.remove('selected');
+      input.blur();
+      wrap.querySelector('.start-btn').classList.remove('selected');
+      wrap.querySelector('.pause-btn').classList.remove('selected');
+      wrap.querySelector('.reset-btn').classList.remove('selected');
+      wrap.querySelector('.clear-save').classList.remove('selected');
+    }
+  });
+}
 function refreshSlots(){slotWraps=[...document.querySelectorAll('.slot-wrap')];highlightRow(currentIndex);}
 
 /* init */
@@ -171,24 +302,118 @@ function initialize(){
   const saved=localStorage.getItem(STORAGE_KEY);
   if(saved){
     const parsed=JSON.parse(saved);
-    Object.entries(parsed).forEach(([id,data])=>{
-      createSlot(id,data);
-    });
-    // adjust counter to max id so future slots increment correctly
     const maxId = Math.max(0, ...Object.keys(parsed).map(Number));
-    slotCounter = maxId;
+    // Always create at least 4 slots, numbered 1-4
+    for(let i = 1; i <= Math.max(4, maxId); i++){
+      const data = parsed[i] || {seconds: 0, name: '', running: false};
+      createSlot(i, data);
+    }
+    slotCounter = Math.max(4, maxId);
   } else {
-    for(let i=0;i<4;i++) createSlot();
+    for(let i=1; i<=4; i++) createSlot(i, {seconds: 0, name: '', running: false});
+    slotCounter = 4;
   }
 
-  document.getElementById('addSlotBtn').onclick=()=>createSlot();
+  document.getElementById('addSlotBtn').onclick=()=>{
+    createSlot();
+    refreshSlots();
+    // Scroll the new slot into view
+    setTimeout(() => {
+      const newSlot = slotWraps[slotWraps.length - 1];
+      if (newSlot) {
+        newSlot.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+  };
 
   document.addEventListener('keydown',e=>{
     const now=Date.now();
     if(now-lastMouseMoveTime>200){
-      if(e.key==='ArrowDown'){e.preventDefault();currentIndex=(currentIndex+1)%slotWraps.length;highlightRow(currentIndex);}
-      else if(e.key==='ArrowUp'){e.preventDefault();currentIndex=(currentIndex-1+slotWraps.length)%slotWraps.length;highlightRow(currentIndex);}
-      else if(e.key.length===1&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+      if(e.key==='ArrowDown'){
+        e.preventDefault();
+        if(addSlotSelected){
+          // Do nothing, already at bottom
+        } else if(currentIndex === slotWraps.length - 1){
+          // Move from last row to Add Slot button
+          addSlotSelected = true;
+          selectedControl = 0;
+        } else {
+          // Move to next row
+          currentIndex = (currentIndex + 1) % slotWraps.length;
+          selectedControl = 0;
+          addSlotSelected = false;
+        }
+        highlightRow(currentIndex);
+      }
+      else if(e.key==='ArrowUp'){
+        e.preventDefault();
+        if(addSlotSelected){
+          // Move from Add Slot to last row
+          addSlotSelected = false;
+          currentIndex = slotWraps.length - 1;
+          selectedControl = 0;
+        } else {
+          // Move to previous row
+          currentIndex = (currentIndex - 1 + slotWraps.length) % slotWraps.length;
+          selectedControl = 0;
+          addSlotSelected = false;
+        }
+        highlightRow(currentIndex);
+      }
+      else if(e.key==='ArrowRight' && !addSlotSelected){
+        e.preventDefault();
+        selectedControl = Math.min(4, selectedControl + 1);
+        highlightRow(currentIndex);
+      }
+      else if(e.key==='ArrowLeft' && !addSlotSelected){
+        e.preventDefault();
+        selectedControl = Math.max(0, selectedControl - 1);
+        highlightRow(currentIndex);
+      }
+      else if(e.key==='Enter'){
+        e.preventDefault();
+        if(addSlotSelected){
+          const btn = document.getElementById('addSlotBtn');
+          btn.style.transform = 'scale(0.98)';
+          setTimeout(() => btn.style.transform = '', 150);
+          createSlot();
+          refreshSlots();
+          // Scroll the new slot into view
+          setTimeout(() => {
+            const newSlot = slotWraps[slotWraps.length - 1];
+            if (newSlot) {
+              newSlot.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, 100);
+        } else {
+          const currentSlot = slotWraps[currentIndex].querySelector('.activity-slot');
+          if(selectedControl === 1) {
+            const btn = slotWraps[currentIndex].querySelector('.start-btn');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => btn.style.transform = '', 150);
+            startTimer(currentSlot);
+          }
+          else if(selectedControl === 2) {
+            const btn = slotWraps[currentIndex].querySelector('.pause-btn');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => btn.style.transform = '', 150);
+            pauseTimer(currentSlot);
+          }
+          else if(selectedControl === 3) {
+            const btn = slotWraps[currentIndex].querySelector('.reset-btn');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => btn.style.transform = '', 150);
+            resetTimer(currentSlot);
+          }
+          else if(selectedControl === 4) {
+            const btn = slotWraps[currentIndex].querySelector('.clear-save');
+            btn.style.transform = 'scale(0.98)';
+            setTimeout(() => btn.style.transform = '', 150);
+            clearSlot(currentSlot);
+          }
+        }
+      }
+      else if(e.key.length===1&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&selectedControl===0&&!addSlotSelected){
         const input=slotWraps[currentIndex].querySelector('.activity-input');input.focus();
       }
     }
