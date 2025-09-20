@@ -1,351 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hollow Knight Timer</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: url('image.png') center/cover no-repeat fixed;
-            min-height: 100vh;
-            font-family: 'Cinzel', serif;
-            color: #f5f5dc;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* ----- particle canvas ----- */
-        #particleCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        .title {
-            font-size: 3rem;
-            letter-spacing: .15em;
-            margin-bottom: 5px;
-        }
-
-        .title-underline {
-            display: block;
-            width: 200px;
-            margin: 4px auto 20px auto;
-            height: auto;
-        }
-
-        /* ----- activity slots ----- */
-        .activity-slots {
-            margin-top: 20px;
-            position: relative;
-        }
-
-        .slot-wrap {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 40px;
-            margin: 28px 0;
-            position: relative;
-        }
-
-        .activity-slot {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 20px 30px;
-            background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.55) 15%, rgba(0, 0, 0, 0.55) 85%, rgba(0, 0, 0, 0) 100%);
-            border-top: 2px solid rgba(245, 245, 220, 0.4);
-            transition: background .2s ease;
-            min-width: 500px;
-            position: relative;
-            z-index: 0;
-            border-radius: 10px;
-        }
-
-        .slot-wrap.selected .activity-slot {
-            background: linear-gradient(to right, rgba(255, 255, 255, 0.0) 0%, rgba(255, 255, 255, 0.15) 15%, rgba(255, 255, 255, 0.15) 85%, rgba(255, 255, 255, 0.0) 100%);
-            border-top-color: #f5f5dc;
-        }
-
-        /* top-left corner circle always visible */
-        .corner-circle {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 50px;
-            height: 50px;
-            z-index: 1;
-        }
-
-        /* selection highlight circles outside row */
-        .side-icon-left,
-        .side-icon-right {
-            width: 50px;
-            height: 50px;
-            display: none;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .slot-wrap.selected .side-icon-left {
-            left: -40px;
-            display: block;
-        }
-
-        .slot-wrap.selected .side-icon-right {
-            right: -40px;
-            display: block;
-        }
-
-        .slot-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            font-family: 'Cinzel', serif;
-        }
-
-        .slot-number {
-            font-size: 2rem;
-            opacity: .85
-        }
-
-        .activity-input {
-            background: transparent;
-            border: none;
-            font-size: 1.6rem;
-            color: #f5f5dc;
-            outline: none;
-            font-family: 'Cinzel', serif;
-        }
-
-        .timer-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .mini-timer {
-            font-size: 1.4rem;
-            min-width: 140px;
-            text-align: center;
-        }
-
-        .mini-btn {
-            background: none;
-            border: none;
-            color: #f5f5dc;
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: transform .1s ease;
-            padding: 6px 10px;
-        }
-
-        .mini-btn:hover {
-            transform: scale(1.2)
-        }
-
-        .clear-save {
-            font-size: 1.6rem;
-            font-family: 'Cinzel', serif;
-            color: #fff;
-            text-transform: uppercase;
-            background: none;
-            border: none;
-            cursor: pointer;
-            visibility: hidden;
-        }
-
-        .slot-wrap.selected .clear-save {
-            visibility: visible;
-        }
-
-        .controls {
-            margin-top: 40px
-        }
-
-        .add-slot-btn {
-            background: none;
-            border: none;
-            font-family: 'Cinzel', serif;
-            font-size: 1.6rem;
-            color: #fff;
-            text-transform: uppercase;
-            cursor: pointer;
-        }
-
-        .add-slot-btn:hover {
-            transform: scale(1.05);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hollow Knight Timer</title>
+<style>
+/* --- existing styles unchanged --- */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:url('image.png') center/cover no-repeat fixed;
+  min-height:100vh;font-family:'Cinzel',serif;color:#f5f5dc;overflow-x:hidden;position:relative;
+}
+#particleCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1}
+.container{max-width:1000px;margin:0 auto;padding:40px 20px;text-align:center}
+.title{font-size:3rem;letter-spacing:.15em;margin-bottom:5px}
+.title-underline{display:block;width:200px;margin:4px auto 20px auto;height:auto}
+/* slots */
+.activity-slots{margin-top:20px;position:relative}
+.slot-wrap{display:flex;justify-content:center;align-items:center;gap:40px;margin:28px 0;position:relative}
+.activity-slot{
+  display:flex;align-items:center;gap:20px;padding:20px 30px;
+  background:linear-gradient(to right,rgba(0,0,0,0)0%,rgba(0,0,0,0.55)15%,rgba(0,0,0,0.55)85%,rgba(0,0,0,0)100%);
+  border-top:2px solid rgba(245,245,220,0.4);transition:background .2s ease;
+  min-width:500px;position:relative;z-index:0;border-radius:10px;
+}
+.slot-wrap.selected .activity-slot{
+  background:linear-gradient(to right,rgba(255,255,255,0.0)0%,rgba(255,255,255,0.15)15%,rgba(255,255,255,0.15)85%,rgba(255,255,255,0.0)100%);
+  border-top-color:#f5f5dc;
+}
+.corner-circle{position:absolute;top:0;left:0;width:50px;height:50px;z-index:1}
+.side-icon-left,.side-icon-right{width:50px;height:50px;display:none;position:absolute;top:50%;transform:translateY(-50%)}
+.slot-wrap.selected .side-icon-left{left:-40px;display:block}
+.slot-wrap.selected .side-icon-right{right:-40px;display:block}
+.slot-left{display:flex;align-items:center;gap:20px;font-family:'Cinzel',serif}
+.slot-number{font-size:2rem;opacity:.85}
+.activity-input{background:transparent;border:none;font-size:1.6rem;color:#f5f5dc;outline:none;font-family:'Cinzel',serif}
+.timer-controls{display:flex;gap:10px;align-items:center}
+.mini-timer{font-size:1.4rem;min-width:140px;text-align:center}
+.mini-btn{background:none;border:none;color:#f5f5dc;font-size:1.3rem;cursor:pointer;transition:transform .1s ease;padding:6px 10px}
+.mini-btn:hover{transform:scale(1.2)}
+.clear-save{font-size:1.6rem;font-family:'Cinzel',serif;color:#fff;text-transform:uppercase;background:none;border:none;cursor:pointer;visibility:hidden}
+.slot-wrap.selected .clear-save{visibility:visible}
+.controls{margin-top:40px}
+.add-slot-btn{background:none;border:none;font-family:'Cinzel',serif;font-size:1.6rem;color:#fff;text-transform:uppercase;cursor:pointer}
+.add-slot-btn:hover{transform:scale(1.05)}
+</style>
 </head>
 
 <body>
-    <canvas id="particleCanvas"></canvas>
+<canvas id="particleCanvas"></canvas>
 
-    <div class="container">
-        <h1 class="title">HOLLOW KNIGHT TIMER</h1>
-        <img src="title.png" class="title-underline" alt="Title SVG">
+<div class="container">
+  <h1 class="title">HOLLOW KNIGHT TIMER</h1>
+  <img src="title.png" class="title-underline" alt="Title SVG">
+  <div class="activity-slots" id="activitySlots"></div>
+  <div class="controls"><button class="add-slot-btn" id="addSlotBtn">ADD SLOT</button></div>
+</div>
 
-        <div class="activity-slots" id="activitySlots">
-            <!-- Slots added via JS -->
-        </div>
+<script>
+/* ---------- timers & storage ---------- */
+let timers = {};        // {slotId: {seconds,name,running}}
+let intervals = {};
+let slotCounter = 0;
+let currentIndex = 0, slotWraps = [], lastMouseMoveTime = 0;
+const STORAGE_KEY = 'hkTimers';
 
-        <div class="controls"><button class="add-slot-btn" id="addSlotBtn">ADD SLOT</button></div>
-    </div>
+/* helpers */
+function formatTime(s){
+  const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
+  return `${String(h).padStart(2,'0')}H ${String(m).padStart(2,'0')}M ${String(sec).padStart(2,'0')}S`;
+}
+function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(timers)); }
 
-    <script>
-        /* ----- Timer & Slot JS ----- */
-        let timers = {}, intervals = {}, slotCounter = 0;
-        let currentIndex = 0, slotWraps = [], lastMouseMoveTime = 0;
+function getSlotData(slot){
+  return {
+    slotId:slot.dataset.slot,
+    input:slot.querySelector('.activity-input'),
+    timerDisplay:slot.querySelector('.mini-timer'),
+    startBtn:slot.querySelector('.start-btn'),
+    pauseBtn:slot.querySelector('.pause-btn'),
+    resetBtn:slot.querySelector('.reset-btn')
+  };
+}
 
-        function formatTime(s) {
-            const h = Math.floor(s / 3600);
-            const m = Math.floor((s % 3600) / 60);
-            const sec = s % 60;
-            return `${String(h).padStart(2, '0')}H ${String(m).padStart(2, '0')}M ${String(sec).padStart(2, '0')}S`;
-        }
+/* core timer ops */
+function startTimer(slot){
+  const {slotId,timerDisplay}=getSlotData(slot);
+  if (!timers[slotId]) timers[slotId]={seconds:0,name:'',running:false};
+  if (intervals[slotId]) clearInterval(intervals[slotId]);
+  timers[slotId].running=true;
+  intervals[slotId]=setInterval(()=>{
+    timers[slotId].seconds++;
+    timerDisplay.textContent=formatTime(timers[slotId].seconds);
+    persist();
+  },1000);
+}
+function pauseTimer(slot){
+  const {slotId}=getSlotData(slot);
+  if (intervals[slotId]){clearInterval(intervals[slotId]);delete intervals[slotId];}
+  if (timers[slotId]) timers[slotId].running=false;
+  persist();
+}
+function resetTimer(slot){
+  const {slotId,timerDisplay}=getSlotData(slot);
+  if (intervals[slotId]){clearInterval(intervals[slotId]);delete intervals[slotId];}
+  if (!timers[slotId]) timers[slotId]={};
+  timers[slotId].seconds=0; timers[slotId].running=false;
+  timerDisplay.textContent=formatTime(0); persist();
+}
+function clearSlot(slot){
+  const {slotId,input,timerDisplay}=getSlotData(slot);
+  pauseTimer(slot);
+  delete timers[slotId];
+  timerDisplay.textContent=formatTime(0);
+  input.value='';
+  persist();
+}
 
-        function getSlotData(slot) {
-            return {
-                slotId: slot.dataset.slot,
-                input: slot.querySelector('.activity-input'),
-                timerDisplay: slot.querySelector('.mini-timer'),
-                startBtn: slot.querySelector('.start-btn'),
-                pauseBtn: slot.querySelector('.pause-btn'),
-                resetBtn: slot.querySelector('.reset-btn')
-            };
-        }
-
-        function startTimer(slot) { const { slotId, timerDisplay } = getSlotData(slot); if (!timers[slotId]) timers[slotId] = 0; if (intervals[slotId]) clearInterval(intervals[slotId]); intervals[slotId] = setInterval(() => { timers[slotId]++; timerDisplay.textContent = formatTime(timers[slotId]); }, 1000); }
-        function pauseTimer(slot) { const { slotId } = getSlotData(slot); if (intervals[slotId]) { clearInterval(intervals[slotId]); delete intervals[slotId]; } }
-        function resetTimer(slot) { const { slotId, timerDisplay } = getSlotData(slot); if (intervals[slotId]) { clearInterval(intervals[slotId]); delete intervals[slotId]; } timers[slotId] = 0; timerDisplay.textContent = formatTime(0); }
-        function clearSlot(slot) { const { slotId, input, timerDisplay } = getSlotData(slot); pauseTimer(slot); timers[slotId] = 0; timerDisplay.textContent = formatTime(0); input.value = ''; }
-
-        function createSlot() {
-            slotCounter++;
-            const cont = document.getElementById('activitySlots');
-            const wrap = document.createElement('div');
-            wrap.className = 'slot-wrap';
-            wrap.innerHTML = `
-      <img src="corner.png" class="corner-circle" alt="Corner SVG">
-      <img src="left.png" class="side-icon-left" alt="Left selection SVG">
-      <div class="activity-slot" data-slot="${slotCounter}">
-        <div class="slot-left">
-          <span class="slot-number">${slotCounter}.</span>
-          <input type="text" class="activity-input" placeholder="Activity Name">
-          <div class="timer-controls">
-            <div class="mini-timer">${formatTime(0)}</div>
-            <button class="mini-btn start-btn">▶</button>
-            <button class="mini-btn pause-btn">⏸</button>
-            <button class="mini-btn reset-btn">⏹</button>
-          </div>
+/* slot creation */
+function createSlot(id,data={}){
+  slotCounter++;
+  const cont=document.getElementById('activitySlots');
+  const wrap=document.createElement('div');
+  wrap.className='slot-wrap';
+  const slotId = id || slotCounter;
+  wrap.innerHTML=`
+    <img src="corner.png" class="corner-circle" alt="Corner SVG">
+    <img src="left.png" class="side-icon-left" alt="Left selection SVG">
+    <div class="activity-slot" data-slot="${slotId}">
+      <div class="slot-left">
+        <span class="slot-number">${slotId}.</span>
+        <input type="text" class="activity-input" placeholder="Activity Name" value="${data.name||''}">
+        <div class="timer-controls">
+          <div class="mini-timer">${formatTime(data.seconds||0)}</div>
+          <button class="mini-btn start-btn">▶</button>
+          <button class="mini-btn pause-btn">⏸</button>
+          <button class="mini-btn reset-btn">⏹</button>
         </div>
       </div>
-      <img src="right.png" class="side-icon-right" alt="Right selection SVG">
-      <button class="clear-save">CLEAR SAVE</button>`;
-            cont.appendChild(wrap);
-            timers[slotCounter] = 0;
-            setupSlotEvents(wrap.querySelector('.activity-slot'), wrap);
-            refreshSlots();
-        }
+    </div>
+    <img src="right.png" class="side-icon-right" alt="Right selection SVG">
+    <button class="clear-save">CLEAR SAVE</button>`;
+  cont.appendChild(wrap);
 
-        function setupSlotEvents(slot, wrap) {
-            const { startBtn, pauseBtn, resetBtn } = getSlotData(slot);
-            startBtn.onclick = e => { e.preventDefault(); startTimer(slot); };
-            pauseBtn.onclick = e => { e.preventDefault(); pauseTimer(slot); };
-            resetBtn.onclick = e => { e.preventDefault(); resetTimer(slot); };
-            wrap.querySelector('.clear-save').onclick = e => { e.preventDefault(); clearSlot(slot); };
+  timers[slotId] = {seconds:data.seconds||0, name:data.name||'', running:false};
+  setupSlotEvents(wrap.querySelector('.activity-slot'), wrap);
+  refreshSlots();
 
-            wrap.onmousemove = e => {
-                lastMouseMoveTime = Date.now();
-                currentIndex = slotWraps.indexOf(wrap);
-                highlightRow(currentIndex);
-            }
-        }
+  /* resume running timer if needed */
+  if (data.running){ startTimer(wrap.querySelector('.activity-slot')); }
+}
 
-        function highlightRow(i) { slotWraps.forEach((wrap, idx) => wrap.classList.toggle('selected', idx === i)); }
-        function refreshSlots() { slotWraps = [...document.querySelectorAll('.slot-wrap')]; highlightRow(currentIndex); }
+function setupSlotEvents(slot,wrap){
+  const {startBtn,pauseBtn,resetBtn,input,slotId}=getSlotData(slot);
+  startBtn.onclick=e=>{e.preventDefault();startTimer(slot);};
+  pauseBtn.onclick=e=>{e.preventDefault();pauseTimer(slot);};
+  resetBtn.onclick=e=>{e.preventDefault();resetTimer(slot);};
+  input.oninput=()=>{ if(timers[slotId]){timers[slotId].name=input.value;persist();}};
+  wrap.querySelector('.clear-save').onclick=e=>{e.preventDefault();clearSlot(slot);};
+  wrap.onmousemove=()=>{lastMouseMoveTime=Date.now();currentIndex=slotWraps.indexOf(wrap);highlightRow(currentIndex);}
+}
 
-        function initialize() {
-            for (let i = 0; i < 4; i++) createSlot();
-            document.getElementById('addSlotBtn').onclick = createSlot;
+function highlightRow(i){slotWraps.forEach((wrap,idx)=>wrap.classList.toggle('selected',idx===i));}
+function refreshSlots(){slotWraps=[...document.querySelectorAll('.slot-wrap')];highlightRow(currentIndex);}
 
-            document.addEventListener('keydown', e => {
-                const now = Date.now();
-                if (now - lastMouseMoveTime > 200) {
-                    if (e.key === 'ArrowDown') { e.preventDefault(); currentIndex = (currentIndex + 1) % slotWraps.length; highlightRow(currentIndex); }
-                    else if (e.key === 'ArrowUp') { e.preventDefault(); currentIndex = (currentIndex - 1 + slotWraps.length) % slotWraps.length; highlightRow(currentIndex); }
-                    else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-                        const input = slotWraps[currentIndex].querySelector('.activity-input');
-                        input.focus();
-                    }
-                }
-            });
-        }
+/* init */
+function initialize(){
+  // restore from storage if present
+  const saved=localStorage.getItem(STORAGE_KEY);
+  if(saved){
+    const parsed=JSON.parse(saved);
+    Object.entries(parsed).forEach(([id,data])=>{
+      createSlot(id,data);
+    });
+    // adjust counter to max id so future slots increment correctly
+    const maxId = Math.max(0, ...Object.keys(parsed).map(Number));
+    slotCounter = maxId;
+  } else {
+    for(let i=0;i<4;i++) createSlot();
+  }
 
-        document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', initialize) : initialize();
+  document.getElementById('addSlotBtn').onclick=()=>createSlot();
 
-        /* ----- particle effect ----- */
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        let w, h, particles = [];
-        function resizeCanvas() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resizeCanvas); resizeCanvas();
+  document.addEventListener('keydown',e=>{
+    const now=Date.now();
+    if(now-lastMouseMoveTime>200){
+      if(e.key==='ArrowDown'){e.preventDefault();currentIndex=(currentIndex+1)%slotWraps.length;highlightRow(currentIndex);}
+      else if(e.key==='ArrowUp'){e.preventDefault();currentIndex=(currentIndex-1+slotWraps.length)%slotWraps.length;highlightRow(currentIndex);}
+      else if(e.key.length===1&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+        const input=slotWraps[currentIndex].querySelector('.activity-input');input.focus();
+      }
+    }
+  });
+}
+document.readyState==='loading'?document.addEventListener('DOMContentLoaded',initialize):initialize();
 
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * w;
-                this.y = Math.random() * h;
-                this.size = Math.random() * 2 + 1;
-                this.speedX = Math.random() * 0.5 - 0.25;
-                this.speedY = Math.random() * 0.5 - 0.25;
-                this.opacity = Math.random() * 0.6 + 0.2;
-            }
-            update() {
-                this.x += this.speedX; this.y += this.speedY;
-                if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(245,245,220,${this.opacity})`;
-                ctx.fill();
-            }
-        }
-
-        for (let i = 0; i < 100; i++) particles.push(new Particle());
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, w, h);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
-    </script>
+/* ---------- particle effect ---------- */
+const canvas=document.getElementById('particleCanvas');
+const ctx=canvas.getContext('2d');
+let w,h,particles=[];
+function resizeCanvas(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;}
+window.addEventListener('resize',resizeCanvas);resizeCanvas();
+class Particle{
+  constructor(){this.reset();}
+  reset(){this.x=Math.random()*w;this.y=Math.random()*h;this.size=Math.random()*2+1;
+    this.speedX=Math.random()*0.5-0.25;this.speedY=Math.random()*0.5-0.25;this.opacity=Math.random()*0.6+0.2;}
+  update(){this.x+=this.speedX;this.y+=this.speedY;
+    if(this.x<0||this.x>w||this.y<0||this.y>h)this.reset();}
+  draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fillStyle=`rgba(245,245,220,${this.opacity})`;ctx.fill();}
+}
+for(let i=0;i<100;i++)particles.push(new Particle());
+(function animate(){
+  ctx.clearRect(0,0,w,h);
+  particles.forEach(p=>{p.update();p.draw();});
+  requestAnimationFrame(animate);
+})();
+</script>
 </body>
-
 </html>
